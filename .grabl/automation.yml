@@ -2,15 +2,15 @@ build:
   performance:
     jobs:
       run-grakn:
-        machine: grabl-ubuntu-1910-cache-run-grakn
+        machine: grabl-ubuntu-1910-timeout-5h
         type: background
         timeout: "18000"
         script: |
           wget "https://storage.googleapis.com/grabl-dev-secrets/rootCA.jks"
           cp rootCA.jks /tmp/rootCA.jks
-          # git clone https://github.com/graknlabs/grakn.git
+          git clone https://github.com/graknlabs/grakn.git
           cd grakn
-          git checkout f04512e47c6b8b4ed87239870d07b3ce7f2c58ee
+          git checkout 1.7.0
           bazel build //:assemble-linux-targz
           mkdir dist
           tar -xf ./bazel-bin/grakn-core-all-linux.tar.gz -C ./dist/
@@ -22,13 +22,13 @@ build:
             --tracing-access-token T30qo2SGRfqYwbdZndtpzVdAEqi4TBEd
           export GRABL_PERFORMANCE_RUN_GRAKN_URI="${HOSTNAME}:48555"
       test-performance-big:
-        machine: grabl-ubuntu-1910-cache-test-performance-big
+        machine: grabl-ubuntu-1910-timeout-5h
         type: foreground
         timeout: "18000"
         script: |
           wget "https://storage.googleapis.com/grabl-dev-secrets/rootCA.jks"
           cp rootCA.jks /tmp/rootCA.jks
-          # git clone https://github.com/lolski/simulation.git
+          git clone https://github.com/lolski/simulation.git
           cd simulation
           git fetch origin tracing-test
           git checkout 24fd98e752ed57acbb42d875e8442bb95b1642bb
@@ -42,8 +42,7 @@ build:
             --username lriuui0x0 \
             --api-token T30qo2SGRfqYwbdZndtpzVdAEqi4TBEd \
             --iterations 1 \
-            --seed 1 || true
-          sleep 5h
+            --seed 1
     execution:
       - run-grakn
       - test-performance-big:
