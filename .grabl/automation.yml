@@ -1,45 +1,34 @@
 build:
-  quality:
-    job:
-      dependency-analysis:
-        machine: grabl-ubuntu-1910
-        type: foreground
-        script: |
-          echo "workflow quality: dependency-analysis"
-  correctness:
-    job:
-      build:
-        machine: grabl-ubuntu-1910
-        type: foreground
-        script: |
-          echo "workflow correctness: build"
   performance:
     jobs:
       run-grakn:
-        machine: grabl-ubuntu-1910
+        machine: grabl-ubuntu-1910-no-timeout
         type: background
-        timeout: "1800"
+        timeout: "18000"
         script: |
-          git clone https://github.com/graknlabs/grakn.git
+          git clone https://github.com/lolski/grakn.git
           cd grakn
-          git checkout 1.7.0
+          git checkout f04512e47c6b8b4ed87239870d07b3ce7f2c58ee
+          cp rootCA.jks /tmp/rootCA.jks
           bazel build //:assemble-linux-targz
           mkdir dist
           tar -xf ./bazel-bin/grakn-core-all-linux.tar.gz -C ./dist/
           cd ./dist/grakn-core-all-linux/
-          ./grakn server start -- \
-            --tracing-enabled \
+          SERVER_JAVAOPTS="-Djavax.net.ssl.trustStore=/tmp/rootCA.jks -Djavax.net.ssl.trustStorePassword=changeit" \
+            ./grakn server start -- \
             --tracing-uri $GRABL_URI \
             --tracing-username lriuui0x0 \
-            --tracing-access-token xzWGjjJcCBeur3YUzVyPqjtB14g1cTVd
+            --tracing-access-token T30qo2SGRfqYwbdZndtpzVdAEqi4TBEd
           export GRABL_PERFORMANCE_RUN_GRAKN_URI="${HOSTNAME}:48555"
       test-performance-big:
-        machine: grabl-ubuntu-1910
+        machine: grabl-ubuntu-1910-no-timeout
         type: foreground
+        timeout: "18000"
         script: |
           git clone https://github.com/lolski/simulation.git
           cd simulation
-          git checkout fc5942f1ebc92aee24cfafd9a27e97020ae7e1c5
+          git checkout f1f3caabe1fbdedd6382a8216c689c93a7ca0094
+          cp rootCA.jks /tmp/rootCA.jks
           bazel run //:simulation -- \
             --keyspace world \
             --grakn-uri $GRABL_PERFORMANCE_RUN_GRAKN_URI \
@@ -48,34 +37,10 @@ build:
             --repo $GRABL_REPO \
             --commit $GRABL_COMMIT \
             --username lriuui0x0 \
-            --api-token xzWGjjJcCBeur3YUzVyPqjtB14g1cTVd \
-            --iterations 50 \
+            --api-token T30qo2SGRfqYwbdZndtpzVdAEqi4TBEd \
+            --iterations 5 \
             --seed 1
     execution:
       - run-grakn
       - test-performance-big:
           depends: [run-grakn]
-
-release:
-  validation:
-    job:
-      validate-dependencies:
-        machine: grabl-ubuntu-1910
-        type: foreground
-        script: |
-          echo "workflow validation: validate-dependencies"
-  deployment:
-    job:
-      deploy-workbase:
-        machine: grabl-ubuntu-1910
-        type: foreground
-        script: |
-          echo "workflow deployment: deploy-workbase"
-  bump:
-    job:
-      bump-version:
-        machine: grabl-ubuntu-1910
-        type: foreground
-        script: |
-          echo "workflow bump: bump-version"
-
