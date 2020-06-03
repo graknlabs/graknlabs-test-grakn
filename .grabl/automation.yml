@@ -32,6 +32,7 @@ build:
           cd simulation
           git fetch origin tracing-test
           git checkout 24fd98e752ed57acbb42d875e8442bb95b1642bb
+          cp rootCA.jks /tmp/rootCA.jks
           bazel run //:simulation -- \
             --keyspace world \
             --grakn-uri $GRABL_PERFORMANCE_RUN_GRAKN_URI \
