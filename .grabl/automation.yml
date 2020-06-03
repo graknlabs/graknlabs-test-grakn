@@ -6,10 +6,10 @@ build:
         type: background
         timeout: "18000"
         script: |
+          wget "https://storage.cloud.google.com/grabl-dev-secrets/rootCA.jks" -o /tmp/rootCA.jk
           # git clone https://github.com/lolski/grakn.git
           cd grakn
           git checkout f04512e47c6b8b4ed87239870d07b3ce7f2c58ee
-          cp rootCA.jks /tmp/rootCA.jks
           bazel build //:assemble-linux-targz
           mkdir dist
           tar -xf ./bazel-bin/grakn-core-all-linux.tar.gz -C ./dist/
@@ -27,6 +27,7 @@ build:
         type: foreground
         timeout: "18000"
         script: |
+          wget "https://storage.cloud.google.com/grabl-dev-secrets/rootCA.jks" -o /tmp/rootCA.jk
           # git clone https://github.com/lolski/simulation.git
           cd simulation
           git fetch origin tracing-test
@@ -41,7 +42,7 @@ build:
             --commit $GRABL_COMMIT \
             --username lriuui0x0 \
             --api-token T30qo2SGRfqYwbdZndtpzVdAEqi4TBEd \
-            --iterations 5 \
+            --iterations 1 \
             --seed 1
     execution:
       - run-grakn
