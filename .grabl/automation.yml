@@ -32,7 +32,7 @@ build:
           cd simulation
           git fetch origin tracing-test
           git checkout 24fd98e752ed57acbb42d875e8442bb95b1642bb
-          bazel run //:simulation -- --jvm_flags="-Djavax.net.ssl.trustStore=/tmp/rootCA.jks -Djavax.net.ssl.trustStorePassword=changeit" \
+          bazel run //:simulation -- \
             --keyspace world \
             --grakn-uri $GRABL_PERFORMANCE_RUN_GRAKN_URI \
             --tracing-uri $GRABL_URI \
