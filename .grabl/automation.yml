@@ -2,7 +2,7 @@ build:
   performance:
     jobs:
       run-grakn:
-        machine: grabl-ubuntu-1910-timeout-5h
+        machine: grabl-ubuntu-2004-long
         type: background
         timeout: "18000"
         script: |
@@ -22,7 +22,7 @@ build:
             --tracing-access-token esobMAA22DByylFcblvp4e6Vrt01D67i
           export GRABL_PERFORMANCE_RUN_GRAKN_URI="${HOSTNAME}:48555"
       test-performance-big:
-        machine: grabl-ubuntu-1910-timeout-5h
+        machine: grabl-ubuntu-2004-long
         type: foreground
         timeout: "18000"
         script: |
