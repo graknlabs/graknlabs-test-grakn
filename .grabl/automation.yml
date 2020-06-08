@@ -19,7 +19,7 @@ build:
             ./grakn server start -- \
             --tracing-uri $GRABL_URI \
             --tracing-username lriuui0x0 \
-            --tracing-access-token jfrWWs4K6USeUT6jvU0tiFZLXRhiCDw4
+            --tracing-access-token esobMAA22DByylFcblvp4e6Vrt01D67i
           export GRABL_PERFORMANCE_RUN_GRAKN_URI="${HOSTNAME}:48555"
       test-performance-big:
         machine: grabl-ubuntu-1910-timeout-5h
@@ -40,7 +40,7 @@ build:
             --repo $GRABL_REPO \
             --commit $GRABL_COMMIT \
             --username lriuui0x0 \
-            --api-token jfrWWs4K6USeUT6jvU0tiFZLXRhiCDw4 \
+            --api-token esobMAA22DByylFcblvp4e6Vrt01D67i \
             --iterations 1000 \
             --seed 1
     execution:
