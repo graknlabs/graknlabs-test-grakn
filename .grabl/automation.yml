@@ -19,7 +19,7 @@ build:
             ./grakn server start -- \
             --tracing-uri $GRABL_URI \
             --tracing-username lriuui0x0 \
-            --tracing-access-token rqD1M3WWuEs09mS6wwA73CA0MxKnq4ck
+            --tracing-access-token SvSebxkEZN00VahscpJnezANGu2jhwi8
           export GRABL_PERFORMANCE_RUN_GRAKN_URI="${HOSTNAME}:48555"
       test-performance-big:
         machine: grabl-ubuntu-2004-long
@@ -31,7 +31,7 @@ build:
           git clone https://github.com/lolski/simulation.git
           cd simulation
           git fetch origin tracing-test
-          git checkout 24fd98e752ed57acbb42d875e8442bb95b1642bb
+          git checkout 4e2d08f5c0652415a7fed84e0823361b6f902388
           bazel run //:simulation -- \
             --keyspace world \
             --grakn-uri $GRABL_PERFORMANCE_RUN_GRAKN_URI \
@@ -40,7 +40,7 @@ build:
             --repo $GRABL_REPO \
             --commit $GRABL_COMMIT \
             --username lriuui0x0 \
-            --api-token rqD1M3WWuEs09mS6wwA73CA0MxKnq4ck \
+            --api-token SvSebxkEZN00VahscpJnezANGu2jhwi8 \
             --iterations 2 \
             --seed 1 \
             -f 1
