@@ -30,8 +30,8 @@ build:
           cp rootCA.jks /tmp/rootCA.jks
           git clone https://github.com/lolski/simulation.git
           cd simulation
-          git fetch origin tracing-test
-          git checkout tracing-test
+          git fetch --tags
+          git checkout tracing-test-v1
           bazel run //:simulation -- \
             --keyspace world \
             --grakn-uri $GRABL_PERFORMANCE_RUN_GRAKN_URI \
