@@ -41,7 +41,7 @@ build:
             --commit $GRABL_COMMIT \
             --username lriuui0x0 \
             --api-token rqD1M3WWuEs09mS6wwA73CA0MxKnq4ck \
-            --iterations 1 \
+            --iterations 2 \
             --seed 1 \
             -f 1
     execution:
