@@ -1,73 +1,55 @@
-# grabl config 
-# @graknlabs_grakn_core
-
-config:
-  version-candidate: ./VERSION
-  dependencies:
-    - graql: [snapshot, release]
-    - protocol: [snapshot, release]
-    - client-java: release
-
 build:
   performance:
     jobs:
       run-grakn:
-        machine: grabl-ubuntu-1910
+        machine: grabl-ubuntu-2004-long
         type: background
-        timeout: "1800"
+        timeout: "18000"
         script: |
+          mkdir -p ~/.config/gcloud/
+          echo $GRABL_RBE_CREDENTIAL > ~/.config/gcloud/application_default_credentials.json
+          wget "https://storage.googleapis.com/grabl-dev-secrets/rootCA.jks"
+          cp rootCA.jks /tmp/rootCA.jks
           git clone https://github.com/graknlabs/grakn.git
           cd grakn
-          git fetch
-          git checkout origin/add-grabl-tracing
-          bazel build //:assemble-linux-targz
+          git checkout 1.7.0
+          bazel build --config=rbe //:assemble-linux-targz
           mkdir dist
           tar -xf ./bazel-bin/grakn-core-all-linux.tar.gz -C ./dist/
           cd ./dist/grakn-core-all-linux/
-          ./grakn server start -- \
-            --tracing-enabled \
-            --tracing-uri $GRABL_URI \
-            --tracing-username $GRABL_OWNER \
+          SERVER_JAVAOPTS="-Djavax.net.ssl.trustStore=/tmp/rootCA.jks -Djavax.net.ssl.trustStorePassword=changeit" \
+            ./grakn server start -- \
+            --tracing-uri $GRABL_TRACING_URI \
+            --tracing-username lriuui0x0 \
             --tracing-access-token $GRABL_TOKEN
-          export GRABL_PERFORMANCE_RUN_GRAKN_URI="${HOSTNAME}:48555"
-          
+          export GRABL_EXPORT_PERFORMANCE_GRAKN_URI="${HOSTNAME}:48555"
       test-performance-big:
-        machine: grabl-ubuntu-1910
+        machine: grabl-ubuntu-2004-long
         type: foreground
-        timeout: "1800"
+        timeout: "18000"
         script: |
-          git clone https://github.com/graknlabs/grakn.git
-          cd grakn
-          git fetch
-          git checkout origin/add-grabl-tracing
-          bazel run @graknlabs_simulation//:simulation -- \
-            --keyspace simulation \
-            --grakn-uri $GRABL_PERFORMANCE_RUN_GRAKN_URI \
-            --tracing-uri $GRABL_URI \
+          mkdir -p ~/.config/gcloud/
+          echo $GRABL_RBE_CREDENTIAL > ~/.config/gcloud/application_default_credentials.json
+          wget "https://storage.googleapis.com/grabl-dev-secrets/rootCA.jks"
+          cp rootCA.jks /tmp/rootCA.jks
+          git clone https://github.com/lolski/simulation.git
+          cd simulation
+          git fetch --tags
+          git checkout tracing-test-v1
+          bazel run --config=rbe //:simulation -- \
+            --keyspace world \
+            --grakn-uri $GRABL_EXPORT_PERFORMANCE_GRAKN_URI \
+            --tracing-uri $GRABL_TRACING_URI \
             --org $GRABL_OWNER \
             --repo $GRABL_REPO \
             --commit $GRABL_COMMIT \
-            --username $GRABL_OWNER \
+            --username lriuui0x0 \
             --api-token $GRABL_TOKEN \
-            --iterations 1 \
-            --seed 1
+            --iterations 20 \
+            --seed 1 \
+            -f 1
     execution:
       - run-grakn
       - test-performance-big:
           depends: [run-grakn]
 
-release:
-  validation:
-    job:
-      machine: ubuntu-1910
-      type: foreground
-      script: |
-        bazel run @graknlabs_build_tools//ci:release-validate-deps -- graknlabs_common graknlabs_graql graknlabs_protocol
-  deployment:
-    jobs:
-    execution:
-  bump:
-    job:
-      machine: ubuntu-1910
-      type: foreground
-      script: bazel run @graknlabs_build_tools//ci:version-bump
