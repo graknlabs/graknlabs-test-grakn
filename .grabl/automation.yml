@@ -35,7 +35,7 @@ build:
           git clone https://github.com/lolski/simulation.git
           cd simulation
           git fetch --tags
-          git checkout tracing-test-v1
+          git checkout tracing-test-v2
           bazel run --config=rbe //:simulation -- \
             --keyspace world \
             --grakn-uri $GRABL_EXPORT_PERFORMANCE_GRAKN_URI \
